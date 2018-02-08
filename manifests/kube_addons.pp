@@ -77,6 +77,7 @@ class kubernetes::kube_addons (
   if $controller {
     exec { 'Assign master role to controller':
       command => "kubectl label node ${::hostname} node-role.kubernetes.io/master=",
+      path    => "/bin:/usr/bin",
       unless  => "kubectl describe nodes ${::hostname} | tr -s ' ' | grep 'Roles: master'",
     }
 
