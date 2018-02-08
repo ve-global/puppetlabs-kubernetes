@@ -82,7 +82,7 @@
 #   The boot strap token description, this must be base64 encoded.
 # lint:ignore:140chars
 #   An example with hierawould be  kubernetes::bootstrap_token_description: VGhlIGRlZmF1bHQgYm9vdHN0cmFwIHRva2VuIHBhc3NlZCB0byB0aGUgY2x1c3RlciB2aWEgUHVwcGV0Lg==
-# lint:endignore 
+# lint:endignore
 #
 # [*bootstrap_token_id*]
 #   This is the id the cluster will use to point to the token, this must be base64 encoded.
@@ -260,6 +260,7 @@ class kubernetes (
   Optional[String] $sa_key                                         = $kubernetes::params::sa_key,
   Optional[String] $sa_pub                                         = $kubernetes::params::sa_pub,
   Optional[String] $cni_network_provider                           = $kubernetes::params::cni_network_provider,
+  Optional[String] $docker_version                                 = $kubernetes::params::docker_version,
   Boolean $install_dashboard                                       = $kubernetes::params::install_dashboard,
   Boolean $taint_master                                            = $kubernetes::params::taint_master,
 
