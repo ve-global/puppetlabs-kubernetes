@@ -263,6 +263,7 @@ class kubernetes (
   Optional[String] $docker_version                                 = $kubernetes::params::docker_version,
   Boolean $install_dashboard                                       = $kubernetes::params::install_dashboard,
   Boolean $taint_master                                            = $kubernetes::params::taint_master,
+Boolean $disable_network_args                                      = $kubernetes::params::disable_network_args,
 
   )  inherits kubernetes::params {
 
