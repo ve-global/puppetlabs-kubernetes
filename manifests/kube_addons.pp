@@ -15,7 +15,7 @@ class kubernetes::kube_addons (
     logoutput   => true,
     tries       => 5,
     try_sleep   => 5,
-    }
+  }
 
   if $bootstrap_controller {
 
