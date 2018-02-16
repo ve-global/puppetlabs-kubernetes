@@ -59,9 +59,13 @@ $front_proxy_client_crt = undef
 $front_proxy_client_key = undef
 $sa_key = undef
 $sa_pub = undef
-$cni_cluster_cidr = undef
+$cni_cluster_cidr = "10.32.0.0/12"
 $cni_node_cidr = undef
 $cni_network_provider = undef
 $install_dashboard = false
 $taint_master = true
+$cni_provider = undef
+$cni_calico_ipip_mode = 'Off' # [CrossSubnet|Always|Off]you need this in aws if your nodes are not in the same network segment
+$cni_calico_nat_outgoing = false # you need this if you want to be able to allow pods to communicate from a private subnet
+$cloud_provider = undef
 }
