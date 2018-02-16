@@ -35,6 +35,7 @@ spec:
     <% if @kubernetes_version =~ /1[.](6|7)[.]\d/ -%>- --authorization-mode=RBAC<% end %>
     - --advertise-address=<%= @kube_api_advertise_address  %>
     - --etcd-servers=http://127.0.0.1:2379
+    <% if @cloud_provider == "aws" -%>- --cloud-provider=aws<% end %>
 <% @apiserver_extra_arguments.each do |arg| -%>
     - <%= arg %>
 <% end -%>

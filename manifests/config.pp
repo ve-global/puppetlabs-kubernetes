@@ -49,6 +49,7 @@ class kubernetes::config (
   Optional[String] $front_proxy_client_key                         = $kubernetes::front_proxy_client_key,
   Optional[String] $sa_key                                         = $kubernetes::sa_key,
   Optional[String] $sa_pub                                         = $kubernetes::sa_pub,
+  Optional[String] $cloud_provider                                 = $kubernetes::cloud_provider,
 
 ){
 
