@@ -104,12 +104,12 @@ spec:
           - etcd
           args:
             - --name=calico-etcd
-            - --listen-client-urls=http://<%= $facts['networking']['ip'] %>:6666,http://127.0.0.1:6666
-            - --listen-peer-urls=http://<%= $facts['networking']['ip'] %>:6667
-            - --advertise-client-urls=http://<%= $facts['networking']['ip'] %>:6666
+            - --listen-client-urls=http://0.0.0.0:6666,http://127.0.0.1:6666
+            - --listen-peer-urls=http://0.0.0.0:6667
+            - --advertise-client-urls=http://0.0.0.0:6666
             - --data-dir=/var/lib/calico/etcd
             - --initial-cluster="<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints %>"
-            - --initial-advertise-peer-urls=http://<%= $facts['networking']['ip'] %>:6667
+            - --initial-advertise-peer-urls=http://0.0.0.0:6667
             - --initial-cluster-token=calico-etcd-cluster-1
             - --initial-cluster-state=new
             - --heartbeat-interval=250
