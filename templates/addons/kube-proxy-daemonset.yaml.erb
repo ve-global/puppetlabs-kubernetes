@@ -21,7 +21,7 @@ spec:
         command:
         - /usr/local/bin/kube-proxy
         - --kubeconfig=/var/lib/kube-proxy/kubeconfig.conf
-        - --cluster-cidr=<%= @cni_cluster_cidr %>
+        <%= @cni_cluster_cidr %>
         - --proxy-mode=userspace
         securityContext:
           privileged: true

@@ -2,12 +2,16 @@ class kubernetes::cni::calico_bootstrap_controller (
     String $cni_calico_ipip_mode         = $kubernetes::cni_calico_ipip_mode,
     Boolean $cni_calico_nat_outgoing     = $kubernetes::cni_calico_nat_outgoing,
     String $cni_cluster_cidr             = $kubernetes::cni_cluster_cidr,
+    String $etcd_initial_cluster         = $kubernetes::etcd_initial_cluster,
+
   ) {
 
   File {
     owner  => 'root',
     group  => 'root'
   }
+
+  $cni_etcd_endpoints = $etcd_initial_cluster.regsubst(":[0-9]+", ":6666", 'G')
 
   # deploy the manifest for the provider
   file { '/var/lib/calico':

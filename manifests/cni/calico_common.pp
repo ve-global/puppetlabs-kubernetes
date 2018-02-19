@@ -2,6 +2,7 @@ class kubernetes::cni::calico_common (
     String $cni_calico_ipip_mode         = $kubernetes::cni_calico_ipip_mode,
     Boolean $cni_calico_nat_outgoing     = $kubernetes::cni_calico_nat_outgoing,
     String $cni_cluster_cidr             = $kubernetes::cni_cluster_cidr,
+    String $etcd_initial_cluster         = $kubernetes::etcd_initial_cluster,
   ) {
 
   include wget
