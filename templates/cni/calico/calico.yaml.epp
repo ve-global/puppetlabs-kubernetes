@@ -103,7 +103,7 @@ spec:
           command:
           - etcd
           args:
-            - --name=calico-etcd-<%= $facts['networking']['hostname'] %>
+            - --name=calico-etcd
             - --listen-client-urls=http://<%= $facts['networking']['ip'] %>:6666,http://127.0.0.1:6666
             - --listen-peer-urls=http://<%= $facts['networking']['ip'] %>:6667
             - --advertise-client-urls=http://<%= $facts['networking']['ip'] %>:6666
