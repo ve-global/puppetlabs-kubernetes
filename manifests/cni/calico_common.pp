@@ -13,6 +13,15 @@ class kubernetes::cni::calico_common (
     mode  => "0640",
   }
 
+  # deploy the manifest for the provider
+  file { '/var/lib/calico':
+    ensure => directory,
+  }
+
+  file { '/var/lib/calico/etcd':
+    ensure => directory,
+  }
+
   file { '/etc/cni/net.d/calico-kubeconfig':
     ensure  => file,
     content => epp("kubernetes/cni/calico/calico-kubeconfig.epp"),

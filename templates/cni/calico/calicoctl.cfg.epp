@@ -3,4 +3,4 @@ kind: CalicoAPIConfig
 metadata:
 spec:
   datastoreType: "etcdv3"
-  etcdEndpoints: "<%= $cni_etcd_endpoints %>"
+  etcdEndpoints: "<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints %>"

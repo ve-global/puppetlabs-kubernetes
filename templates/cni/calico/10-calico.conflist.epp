@@ -4,7 +4,7 @@
   "plugins": [
     {
         "type": "calico",
-        "etcd_endpoints": "<%= $cni_etcd_endpoints %>",
+        "etcd_endpoints": "<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints %>",
         "etcd_key_file": "",
         "etcd_cert_file": "",
         "etcd_ca_cert_file": "",
