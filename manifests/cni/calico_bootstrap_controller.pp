@@ -12,7 +12,7 @@ class kubernetes::cni::calico_bootstrap_controller (
   }
 
   $cni_etcd_endpoints = $etcd_initial_cluster.regsubst(":[0-9]+", ":6667", 'G').regsubst('etcd-[^=]+', 'calico-etcd', 'G')
-  $cni_etcd_endpoints_list = $etcd_initial_cluster.regsubst(":[0-9]+", "", 'G').regsubst('etcd-[^=]+=', '', 'G').split(',')
+  $cni_etcd_endpoints_list = $etcd_initial_cluster.regsubst(":[0-9]+", "", 'G').regsubst('etcd-[^=]+=', '', 'G').regsubst('https://', '', 'G').split(',')
 
   file { '/var/lib/calico/rbac.yaml':
     ensure  => file,
