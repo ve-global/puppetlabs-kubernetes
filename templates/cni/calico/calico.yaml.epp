@@ -103,12 +103,6 @@ spec:
           command:
             - etcd
           args:
-#          - --name=calico-<%= $facts['networking']['hostname'] %>
-#          - --data-dir=/var/etcd/calico-data
-#          - --advertise-client-urls="<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints %>"
-#          - --listen-client-urls=http://0.0.0.0:6666
-#          - --listen-peer-urls=http://0.0.0.0:6667
-#          - --auto-compaction-retention=1
             - --name=calico-etcd-<%= $facts['networking']['hostname'] %>
             - --listen-client-urls=http://<%= $facts['networking']['ip'] %>:6666,http://127.0.0.1:6666
             - --listen-peer-urls=http://<%= $facts['networking']['ip'] %>:6667
@@ -144,44 +138,6 @@ spec:
         - hostPath:
             path: /var/lib/calico/etcd
           name: etcd
-
-
-
-
-
-
-          env:
-            - name: CALICO_ETCD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-          command:
-          - /usr/local/bin/etcd
-          args:
-#          - --name=calico-<%= $facts['networking']['hostname'] %>
-#          - --data-dir=/var/etcd/calico-data
-#          - --advertise-client-urls="<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints %>"
-#          - --listen-client-urls=http://0.0.0.0:6666
-#          - --listen-peer-urls=http://0.0.0.0:6667
-#          - --auto-compaction-retention=1
-            - --name=calico-etcd-<%= $facts['networking']['hostname'] %>
-            - --listen-client-urls=http://<%= $facts['networking']['ip'] %>:6666,http://127.0.0.1:6666
-            - --listen-peer-urls=http://<%= $facts['networking']['ip'] %>:6667
-            - --advertise-client-urls=http://<%= $facts['networking']['ip'] %>:6666
-            - --data-dir=/var/lib/calico/etcd
-            - --initial-cluster=etcd-ip-10-1-115-250=http://10.1.115.250:2380,etcd-ip-10-1-116-143=http://10.1.116.143:2380,etcd-ip-10-1-122-222=http://10.1.122.222:2380
-            - --initial-advertise-peer-urls=http://10.1.115.250:2380
-            - --initial-cluster-token=etcd-cluster-1
-            - --initial-cluster-state=new
-            - --heartbeat-interval=250
-            - --election-timeout=1250
-          volumeMounts:
-            - name: var-etcd
-              mountPath: /var/etcd
-      volumes:
-        - name: var-etcd
-          hostPath:
-            path: /var/etcd
 
 ---
 
