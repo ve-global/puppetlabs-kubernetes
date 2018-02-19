@@ -40,7 +40,7 @@ class kubernetes::cni::calico (
   }
 
   # install the rbac configuration
-  exec { 'Install cni network provider':
+  exec { 'Install rbac definition for cni network provider':
     command     => "kubectl apply -f /var/lib/calico/rbac.yaml",
     onlyif      => 'kubectl get nodes',
     refreshonly => true,
