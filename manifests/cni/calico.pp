@@ -9,10 +9,20 @@ class kubernetes::cni::calico (
     group  => 'root'
   }
 
-  # install calicoctl
-  file { '/usr/local/bin/calicoctl':
-    source => 'https://github.com/projectcalico/calicoctl/releases/download/v1.6.3/calicoctl',
-    mode   => '0755',
+  include wget
+
+  # # install calicoctl
+  # file { '/usr/local/bin/calicoctl':
+  #   source => 'https://github.com/projectcalico/calicoctl/releases/download/v1.6.3/calicoctl',
+  #   mode   => '0755',
+  # }
+
+  wget::fetch { "download the jdk7 file":
+    source             => 'https://github.com/projectcalico/calicoctl/releases/download/v1.6.3/calicoctl',
+    destination        => '/usr/local/bin/calicoctl',
+    timeout            => 60,
+    verbose            => true,
+    nocheckcertificate => false,
   }
 
   # deploy the manifest for the provider
