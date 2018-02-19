@@ -101,7 +101,7 @@ spec:
         - name: calico-etcd
           image: gcr.io/google_containers/etcd-amd64:3.1.11
           command:
-            - etcd
+          - etcd
           args:
             - --name=calico-etcd-<%= $facts['networking']['hostname'] %>
             - --listen-client-urls=http://<%= $facts['networking']['ip'] %>:6666,http://127.0.0.1:6666
@@ -130,14 +130,13 @@ spec:
             name: certs
           - mountPath: /var/lib/calico/etcd
             name: etcd
-        hostNetwork: true
-        volumes:
-        - hostPath:
-            path: /etc/ssl/certs
-          name: certs
-        - hostPath:
-            path: /var/lib/calico/etcd
-          name: etcd
+          volumes:
+          - hostPath:
+              path: /etc/ssl/certs
+            name: certs
+          - hostPath:
+              path: /var/lib/calico/etcd
+            name: etcd
 
 ---
 
