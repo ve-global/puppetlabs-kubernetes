@@ -100,27 +100,158 @@ spec:
       containers:
         - name: calico-etcd
           image: gcr.io/google_containers/etcd-amd64:3.1.11
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - "/bin/sh"
+                  - "-ec"
+                  - |
+                    export IP=$(hostname -i)
+                    PEERS=<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints_list %>
+                    list_peers() {
+                      EPS=""
+                      for i in ${PEERS}; do
+                        EPS="${EPS}${EPS:+,}http://${i}:6666"
+                      done
+                      echo ${EPS}
+                    }
+                    member_hash() {
+                      etcdctl member list | grep http://${IP}:6667 | cut -d':' -f1 | cut -d'[' -f1
+                    }
+                    echo "Removing ${IP} from etcd cluster"
+                    ETCDCTL_ENDPOINT=$(list_peers) etcdctl member remove $(member_hash)
+                    if [ $? -eq 0 ]; then
+                      rm -rf /var/run/etcd/*
+                    fi
           command:
-          - /bin/sh
-          - -ec
-          - |
-            mkdir -p /var/run/etcd
-            # To make sure all pods are running and have an IP assigned
-            sleep 5
-            HOSTNAME=$(hostname)
-            export IP=$(hostname -i)
-            exec etcd \
-            --name=calico-etcd \
-            --listen-client-urls=http://${IP}:6666,http://127.0.0.1:6666 \
-            --listen-peer-urls=http://${IP}:6667 \
-            --advertise-client-urls=http://${IP}:6666 \
-            --data-dir=/var/lib/calico/etcd \
-            --initial-cluster="<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints %>" \
-            --initial-advertise-peer-urls=http://${IP}:6667 \
-            --initial-cluster-token=calico-etcd-cluster-1 \
-            --initial-cluster-state=new \
-            --heartbeat-interval=250 \
-            --election-timeout=1250
+            - /bin/sh
+            - -ec
+            - |
+              mkdir -p /var/run/etcd
+              # To make sure all pods are running and have an IP assigned
+              sleep 5
+              HOSTNAME=$(hostname)
+              export IP=$(hostname -i)
+              PEERS=$(nslookup etcd-headless-svc.default.svc.cluster.local | \
+                grep Address | \
+                awk -F ": " '{print $2}' | \
+                grep -v " ")
+              echo "Peer list: $PEERS"
+              list_peers() {
+                EPS=""
+                for i in ${PEERS}; do
+                  EPS="${EPS}${EPS:+,}http://${i}:6666"
+                done
+                echo ${EPS}
+              }
+              list_servers() {
+                EPS=""
+                for i in ${PEERS}; do
+                  EPS="${EPS}${EPS:+,}${i}=http://${i}:6667"
+                done
+                echo ${EPS},${IP}=http://${IP}:6667
+              }
+              collect_member() {
+                ETCDCTL_ENDPOINT=$(list_peers)
+                while ! etcdctl member list &>/dev/null; do sleep 1; done
+                etcdctl member list | grep http://${IP}:6667 | cut -d':' -f1 | cut -d'[' -f1 > /var/run/etcd/member_id
+                exit 0
+              }
+              member_hash() {
+                ETCDCTL_ENDPOINT=$(list_peers) etcdctl member list | grep http://${IP}:6667 | cut -d':' -f1 | cut -d'[' -f1
+              }
+              check_cluster() {
+                ETCDCTL_ENDPOINT=$(list_peers) etcdctl member list > /dev/null
+                local exit_code=$?
+                echo "$exit_code"
+              }
+              # Re-joining after failure?
+              if [ -e /var/run/etcd/default.etcd ]; then
+                echo "Re-joining etcd member"
+                member_id=$(cat /var/run/etcd/member_id)
+                ETCDCTL_ENDPOINT=$(list_peers) etcdctl member update ${member_id} http://${IP}:6667
+                exec etcd --name ${IP} \
+                    --listen-peer-urls http://${IP}:6667 \
+                    --listen-client-urls http://${IP}:6666,http://127.0.0.1:6666 \
+                    --advertise-client-urls http://${IP}:6666 \
+                    --data-dir /var/run/etcd/default.etcd
+              fi
+              # Check if etcd cluster already exists, which means
+              # this is a new member
+              echo "Checking whether a cluster exits"
+              CLUSTER=$(check_cluster)
+              if [[ "$CLUSTER" == "0" ]]; then
+                echo "Adding new member"
+                MEMBER_HASH=$(member_hash)
+                echo "Member hash is $MEMBER_HASH"
+                if [ -n "${MEMBER_HASH}" ]; then
+                    # the member hash exists but for some reason etcd failed
+                    # as the datadir has not be created, we can remove the member
+                    # and retrieve new hash
+                    ETCDCTL_ENDPOINT=$(list_peers) etcdctl member remove ${MEMBER_HASH}
+                fi
+                ETCDCTL_ENDPOINT=$(list_peers) etcdctl member add ${IP} \
+                  http://${IP}:6667 | \
+                  grep "^ETCD_" > /var/run/etcd/new_member_envs
+                if [ $? -ne 0 ]; then
+                  echo "Exiting"
+                  rm -f /var/run/etcd/new_member_envs
+                  exit 1
+                fi
+                cat /var/run/etcd/new_member_envs
+                source /var/run/etcd/new_member_envs
+                collect_member &
+                exec etcd --name ${IP} \
+                      --listen-peer-urls http://${IP}:6667 \
+                      --listen-client-urls http://${IP}:6666,http://127.0.0.1:6666 \
+                      --advertise-client-urls http://${IP}:6666 \
+                      --data-dir /var/run/etcd/default.etcd \
+                      --initial-advertise-peer-urls http://${IP}:6667 \
+                      --initial-cluster ${ETCD_INITIAL_CLUSTER} \
+                      --initial-cluster-state ${ETCD_INITIAL_CLUSTER_STATE}
+              fi
+              echo "Pinging peers"
+              for i in $PEERS; do
+                while true; do
+                  echo "Waiting for peer ${i} to come up..."
+                  ping -W 1 -c 1 ${i} > /dev/null && break
+                  sleep 1s
+                done
+              done
+              collect_member &
+              # Join member for the first time
+              echo "Joining the cluster as a founding member"
+              exec etcd --name ${IP} \
+                      --initial-advertise-peer-urls http://${IP}:6667 \
+                      --listen-peer-urls http://${IP}:6667 \
+                      --listen-client-urls http://${IP}:6666,http://127.0.0.1:6666 \
+                      --advertise-client-urls http://${IP}:6666 \
+                      --initial-cluster-token etcd-cluster-1 \
+                      --initial-cluster $(list_servers) \
+                      --data-dir /var/run/etcd/default.etcd \
+                      --initial-cluster-state new
+#          command:
+#          - /bin/sh
+#          - -ec
+#          - |
+#            mkdir -p /var/run/etcd
+#            # To make sure all pods are running and have an IP assigned
+#            sleep 5
+#            HOSTNAME=$(hostname)
+#            export IP=$(hostname -i)
+#            exec etcd \
+#            --name=calico-etcd \
+#            --listen-client-urls=http://${IP}:6666,http://127.0.0.1:6666 \
+#            --listen-peer-urls=http://${IP}:6667 \
+#            --advertise-client-urls=http://${IP}:6666 \
+#            --data-dir=/var/lib/calico/etcd \
+#            --initial-cluster="<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints %>" \
+#            --initial-advertise-peer-urls=http://${IP}:6667 \
+#            --initial-cluster-token=calico-etcd-cluster-1 \
+#            --initial-cluster-state=new \
+#            --heartbeat-interval=250 \
+#            --election-timeout=1250
           livenessProbe:
             failureThreshold: 8
             httpGet:
