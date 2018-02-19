@@ -218,6 +218,7 @@ spec:
               done
               collect_member &
               # Join member for the first time
+              echo "--initial-cluster $(list_servers)"
               echo "Joining the cluster as a founding member"
               exec etcd --name ${IP} \
                       --initial-advertise-peer-urls http://${IP}:6667 \
