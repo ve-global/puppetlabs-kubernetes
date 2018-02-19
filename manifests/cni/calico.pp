@@ -17,9 +17,9 @@ class kubernetes::cni::calico (
   #   mode   => '0755',
   # }
 
-  file { '/etc/cni/net.d/calico.kubeconfig':
+  file { '/etc/cni/net.d/calico-kubeconfig':
     ensure  => file,
-    content => epp("kubernetes/cni/calico/calico.kubeconfig.epp"),
+    content => epp("kubernetes/cni/calico/calico-kubeconfig.epp"),
     replace => false,
   }
 
