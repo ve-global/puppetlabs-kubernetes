@@ -17,12 +17,19 @@ class kubernetes::cni::calico (
   #   mode   => '0755',
   # }
 
-  wget::fetch { "download the jdk7 file":
+  wget::fetch { "install calicoctl":
     source             => 'https://github.com/projectcalico/calicoctl/releases/download/v1.6.3/calicoctl',
     destination        => '/usr/local/bin/calicoctl',
     timeout            => 60,
     verbose            => true,
     nocheckcertificate => false,
+    mode               => "0775",
+    notify             => Exec['chmod calicoctl'],
+  }
+
+  exec { "chmod calicoctl":
+    command     => '/bin/chmod 755 /usr/local/bin/calicoctl',
+    refreshonly => true,
   }
 
   # deploy the manifest for the provider
@@ -51,6 +58,7 @@ class kubernetes::cni::calico (
 
   # install the rbac configuration
   exec { 'Install rbac definition for cni network provider':
+    path        => ['/usr/bin', '/bin'],
     command     => "kubectl apply -f /var/lib/calico/rbac.yaml",
     onlyif      => 'kubectl get nodes',
     refreshonly => true,
@@ -60,10 +68,11 @@ class kubernetes::cni::calico (
 
   # install the cni provider
   exec { 'Install cni network provider':
-    command => "kubectl apply -f /var/lib/calico/calico.yaml",
-    onlyif  => 'kubectl get nodes',
+    path        => ['/usr/bin', '/bin'],
+    command     => "kubectl apply -f /var/lib/calico/calico.yaml",
+    onlyif      => 'kubectl get nodes',
     refreshonly => true,
-    subscribe => File['/var/lib/calico/calico.yaml'],
+    subscribe   => File['/var/lib/calico/calico.yaml'],
     require     => Exec['wait-for-apiserver'],
   }
 
@@ -74,7 +83,8 @@ class kubernetes::cni::calico (
   }
 
   exec { 'Configure the calico ip pool':
-    command     => 'cat /var/lib/calico/ippool.yaml | calicoctl apply -f -',
+    path        => ['/usr/bin', '/bin'],
+    command     => '/bin/cat /var/lib/calico/ippool.yaml | /usr/local/bin/calicoctl apply -f -',
     subscribe   => File['/var/lib/calico/ippool.yaml'],
     refreshonly => true,
     logoutput   => true,
