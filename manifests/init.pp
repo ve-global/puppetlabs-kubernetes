@@ -324,4 +324,9 @@ class kubernetes (
       -> Class['kubernetes::config']
       -> Class['kubernetes::service']
   }
+
+  case $cni_provider {
+    'calico': { contain kubernetes::cni::calico_common }
+  }
+
 }

@@ -18,11 +18,6 @@ class kubernetes::kube_addons (
     try_sleep   => 5,
   }
 
-  case $cni_provider {
-    'calico': { contain kubernetes::cni::calico_common }
-    default:  { contain kubernetes::cni::default }
-  }
-
   if $bootstrap_controller {
 
     # include the code for the cni provider
