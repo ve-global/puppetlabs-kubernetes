@@ -108,7 +108,7 @@ spec:
                   - "-ec"
                   - |
                     export IP=$(hostname -i)
-                    PEERS=<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints_list %>
+                    PEERS=<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints_list.join(" ") %>
                     list_peers() {
                       EPS=""
                       for i in ${PEERS}; do
@@ -133,7 +133,7 @@ spec:
               sleep 5
               HOSTNAME=$(hostname)
               export IP=$(hostname -i)
-              PEERS=<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints_list %>
+              PEERS=<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints_list.join(" ") %>
               echo "Peer list: $PEERS"
               list_peers() {
                 EPS=""
