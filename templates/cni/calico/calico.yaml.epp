@@ -169,9 +169,8 @@ spec:
                 member_id=$(cat /var/run/etcd/member_id)
                 ETCDCTL_ENDPOINT=$(list_peers) etcdctl member update ${member_id} http://${IP}:6667
                 exec etcd --name ${IP} \
-                    --listen-peer-urls http://${IP}:6667 \
-                    --listen-client-urls http://${IP}:6666,http://127.0.0.1:6666 \
-                    --advertise-client-urls http://${IP}:6666 \
+                    --initial-advertise-peer-urls http://${IP}:6667 --listen-peer-urls http://0.0.0.0:6667 \
+                    --advertise-client-urls http://${IP}:6666 --listen-client-urls http://0.0.0.0:6666 \
                     --data-dir /var/run/etcd/default.etcd
               fi
               # Check if etcd cluster already exists, which means
@@ -200,11 +199,10 @@ spec:
                 source /var/run/etcd/new_member_envs
                 collect_member &
                 exec etcd --name ${IP} \
-                      --listen-peer-urls http://${IP}:6667 \
-                      --listen-client-urls http://${IP}:6666,http://127.0.0.1:6666 \
-                      --advertise-client-urls http://${IP}:6666 \
+                      --initial-advertise-peer-urls http://${IP}:6667 --listen-peer-urls http://0.0.0.0:6667 \
+                      --advertise-client-urls http://${IP}:6666 --listen-client-urls http://0.0.0.0:6666 \
+                      --initial-cluster $(list_servers) \
                       --data-dir /var/run/etcd/default.etcd \
-                      --initial-advertise-peer-urls http://${IP}:6667 \
                       --initial-cluster ${ETCD_INITIAL_CLUSTER} \
                       --initial-cluster-state ${ETCD_INITIAL_CLUSTER_STATE}
               fi
@@ -221,13 +219,16 @@ spec:
               echo "--initial-cluster $(list_servers)"
               echo "Joining the cluster as a founding member"
               exec etcd --name ${IP} \
-                      --initial-advertise-peer-urls http://${IP}:6667 \
-                      --listen-peer-urls http://${IP}:6667 \
-                      --listen-client-urls http://${IP}:6666,http://127.0.0.1:6666 \
-                      --advertise-client-urls http://${IP}:6666 \
-                      --initial-cluster-token etcd-cluster-1 \
-                      --initial-cluster $(list_servers) \
+#                      --initial-advertise-peer-urls http://${IP}:6667 \
+#                      --listen-peer-urls http://${IP}:6667 \
+#                      --listen-client-urls http://${IP}:6666,http://127.0.0.1:6666 \
+#                      --advertise-client-urls http://${IP}:6666 \
+#                      --initial-cluster $(list_servers) \
                       --data-dir /var/run/etcd/default.etcd \
+                      --initial-advertise-peer-urls http://${IP}:6667 --listen-peer-urls http://0.0.0.0:6667 \
+                      --advertise-client-urls http://${IP}:6666 --listen-client-urls http://0.0.0.0:6666 \
+                      --initial-cluster $(list_servers) \
+                      --initial-cluster-token etcd-cluster-1 \
                       --initial-cluster-state new
 #          command:
 #          - /bin/sh
