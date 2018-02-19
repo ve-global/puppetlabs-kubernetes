@@ -28,9 +28,9 @@ class kubernetes::cni::calico_common (
     ensure  => directory,
   }
 
-  file { '/etc/calico/calicoctl.conf':
+  file { '/etc/calico/calicoctl.cfg':
     ensure  => file,
-    content => epp("kubernetes/cni/calico/calicoctl.conf.epp"),
+    content => epp("kubernetes/cni/calico/calicoctl.cfg.epp"),
   }
 
   wget::fetch { "install calicoctl":
