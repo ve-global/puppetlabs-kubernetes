@@ -133,10 +133,7 @@ spec:
               sleep 5
               HOSTNAME=$(hostname)
               export IP=$(hostname -i)
-              PEERS=$(nslookup etcd-headless-svc.default.svc.cluster.local | \
-                grep Address | \
-                awk -F ": " '{print $2}' | \
-                grep -v " ")
+              PEERS=<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints_list %>
               echo "Peer list: $PEERS"
               list_peers() {
                 EPS=""
