@@ -34,7 +34,7 @@ class kubernetes::cni::calico_common (
   }
 
   wget::fetch { "install calicoctl":
-    source             => 'https://github.com/projectcalico/calicoctl/releases/download/v1.6.3/calicoctl',
+    source             => 'https://github.com/projectcalico/calicoctl/releases/download/v2.0.0/calicoctl',
     destination        => '/usr/local/bin/calicoctl',
     timeout            => 60,
     verbose            => false,
