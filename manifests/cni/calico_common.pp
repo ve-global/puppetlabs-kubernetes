@@ -4,9 +4,12 @@ class kubernetes::cni::calico_common (
     String $cni_cluster_cidr             = $kubernetes::cni_cluster_cidr,
   ) {
 
+  include wget
+
   File {
-    owner  => 'root',
-    group  => 'root'
+    owner => 'root',
+    group => 'root',
+    mode  => "0640",
   }
 
   file { '/etc/cni/net.d/calico-kubeconfig':
@@ -19,6 +22,30 @@ class kubernetes::cni::calico_common (
     ensure  => file,
     content => epp("kubernetes/cni/calico/10-calico.conflist.epp"),
     replace => false,
+  }
+
+  file { '/etc/calico':
+    ensure  => directory,
+  }
+
+  file { '/etc/calico/calicoctl.conf':
+    ensure  => file,
+    content => epp("kubernetes/cni/calico/calicoctl.conf.epp"),
+  }
+
+  wget::fetch { "install calicoctl":
+    source             => 'https://github.com/projectcalico/calicoctl/releases/download/v1.6.3/calicoctl',
+    destination        => '/usr/local/bin/calicoctl',
+    timeout            => 60,
+    verbose            => false,
+    nocheckcertificate => false,
+    mode               => "0775",
+    notify             => Exec['chmod calicoctl'],
+  }
+
+  exec { "chmod calicoctl":
+    command     => '/bin/chmod 755 /usr/local/bin/calicoctl',
+    refreshonly => true,
   }
 
 }

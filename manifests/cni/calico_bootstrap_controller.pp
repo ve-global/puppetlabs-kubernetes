@@ -9,23 +9,6 @@ class kubernetes::cni::calico_bootstrap_controller (
     group  => 'root'
   }
 
-  include wget
-
-  wget::fetch { "install calicoctl":
-    source             => 'https://github.com/projectcalico/calicoctl/releases/download/v1.6.3/calicoctl',
-    destination        => '/usr/local/bin/calicoctl',
-    timeout            => 60,
-    verbose            => false,
-    nocheckcertificate => false,
-    mode               => "0775",
-    notify             => Exec['chmod calicoctl'],
-  }
-
-  exec { "chmod calicoctl":
-    command     => '/bin/chmod 755 /usr/local/bin/calicoctl',
-    refreshonly => true,
-  }
-
   # deploy the manifest for the provider
   file { '/var/lib/calico':
     ensure => directory,
@@ -82,6 +65,9 @@ class kubernetes::cni::calico_bootstrap_controller (
     subscribe   => File['/var/lib/calico/ippool.yaml'],
     refreshonly => true,
     logoutput   => true,
-    require     => Exec['wait-for-apiserver'],
+    require     => [
+      Exec['wait-for-apiserver'],
+      Exec['chmod calicoctl'],
+    ],
   }
 }
