@@ -70,3 +70,4 @@ class kubernetes::cni::calico (
     logoutput   => true,
     require     => Exec['wait-for-apiserver'],
   }
+}
