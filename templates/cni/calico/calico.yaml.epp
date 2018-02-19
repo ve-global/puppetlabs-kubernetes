@@ -101,19 +101,26 @@ spec:
         - name: calico-etcd
           image: gcr.io/google_containers/etcd-amd64:3.1.11
           command:
-          - etcd
-          args:
-            - --name=calico-etcd
-            - --listen-client-urls=http://0.0.0.0:6666,http://127.0.0.1:6666
-            - --listen-peer-urls=http://0.0.0.0:6667
-            - --advertise-client-urls=http://0.0.0.0:6666
-            - --data-dir=/var/lib/calico/etcd
-            - --initial-cluster="<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints %>"
-            - --initial-advertise-peer-urls=http://0.0.0.0:6667
-            - --initial-cluster-token=calico-etcd-cluster-1
-            - --initial-cluster-state=new
-            - --heartbeat-interval=250
-            - --election-timeout=1250
+          - /bin/sh
+          - -ec
+          - |
+            mkdir -p /var/run/etcd
+            # To make sure all pods are running and have an IP assigned
+            sleep 5
+            HOSTNAME=$(hostname)
+            export IP=$(hostname -i)
+            exec etcd \
+            --name=calico-etcd \
+            --listen-client-urls=http://${IP}:6666,http://127.0.0.1:6666 \
+            --listen-peer-urls=http://${IP}:6667 \
+            --advertise-client-urls=http://${IP}:6666 \
+            --data-dir=/var/lib/calico/etcd \
+            --initial-cluster="<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints %>" \
+            --initial-advertise-peer-urls=http://${IP}:6667 \
+            --initial-cluster-token=calico-etcd-cluster-1 \
+            --initial-cluster-state=new \
+            --heartbeat-interval=250 \
+            --election-timeout=1250
           livenessProbe:
             failureThreshold: 8
             httpGet:
