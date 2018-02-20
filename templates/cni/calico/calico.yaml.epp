@@ -172,7 +172,9 @@ spec:
                 exec etcd --name ${IP} \
                     --initial-advertise-peer-urls http://${IP}:6667 --listen-peer-urls http://0.0.0.0:6667 \
                     --advertise-client-urls http://${IP}:6666 --listen-client-urls http://0.0.0.0:6666 \
-                    --data-dir /var/run/etcd/default.etcd
+                    --data-dir /var/run/etcd/default.etcd \
+                    --heartbeat-interval 250 \
+                    --election-timeout 1250
               fi
               # Check if etcd cluster already exists, which means
               # this is a new member
@@ -205,7 +207,9 @@ spec:
                       --initial-cluster $(list_servers) \
                       --data-dir /var/run/etcd/default.etcd \
                       --initial-cluster ${ETCD_INITIAL_CLUSTER} \
-                      --initial-cluster-state ${ETCD_INITIAL_CLUSTER_STATE}
+                      --initial-cluster-state ${ETCD_INITIAL_CLUSTER_STATE} \
+                      --heartbeat-interval 250 \
+                      --election-timeout 1250
               fi
               echo "Pinging peers"
               for i in $PEERS; do
@@ -225,7 +229,9 @@ spec:
                       --advertise-client-urls http://${IP}:6666 --listen-client-urls http://0.0.0.0:6666 \
                       --initial-cluster $(list_servers) \
                       --initial-cluster-token etcd-cluster-1 \
-                      --initial-cluster-state new
+                      --initial-cluster-state new \
+                      --heartbeat-interval 250 \
+                      --election-timeout 1250
           livenessProbe:
             failureThreshold: 8
             httpGet:
