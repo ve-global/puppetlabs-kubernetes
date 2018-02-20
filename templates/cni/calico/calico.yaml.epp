@@ -13,7 +13,8 @@ metadata:
   namespace: kube-system
 data:
   # Configure this with the location of your etcd cluster.
-  etcd_endpoints: "<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints %>"
+  # etcd_endpoints: "<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints %>"
+  etcd_endpoints: "http://10.96.232.136:6666"
 
   # Configure the Calico backend to use.
   calico_backend: "bird"
@@ -255,6 +256,27 @@ spec:
       - hostPath:
           path: /var/lib/calico/etcd
         name: etcd
+
+---
+
+# This manifest installs the Service which gets traffic to the Calico
+# etcd.
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: calico-etcd
+  name: calico-etcd
+  namespace: kube-system
+spec:
+  # Select the calico-etcd pod running on the master.
+  selector:
+    k8s-app: calico-etcd
+  # This ClusterIP needs to be known in advance, since we cannot rely
+  # on DNS to get access to etcd.
+  clusterIP: 10.96.232.136
+  ports:
+    - port: 6666
 
 ---
 
