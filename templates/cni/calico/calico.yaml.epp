@@ -147,7 +147,8 @@ spec:
                 for i in ${PEERS}; do
                   EPS="${EPS}${EPS:+,}${i}=http://${i}:6667"
                 done
-                echo ${EPS},${IP}=http://${IP}:6667
+                #echo ${EPS},${IP}=http://${IP}:6667
+                echo ${EPS}
               }
               collect_member() {
                 ETCDCTL_ENDPOINT=$(list_peers)
