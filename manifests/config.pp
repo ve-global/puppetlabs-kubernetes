@@ -50,6 +50,7 @@ class kubernetes::config (
   Optional[String] $sa_key                                         = $kubernetes::sa_key,
   Optional[String] $sa_pub                                         = $kubernetes::sa_pub,
   Optional[String] $cloud_provider                                 = $kubernetes::cloud_provider,
+  Optional[String] $cni_provider                                   = $kubernetes::cni_provider,
   Integer $apiserver_count                                         = $kubernetes::apiserver_count,
 
 ){
