@@ -22,7 +22,7 @@ spec:
         - /usr/local/bin/kube-proxy
         - --kubeconfig=/var/lib/kube-proxy/kubeconfig.conf
         <%= @cni_cluster_cidr %>
-        - --proxy-mode=userspace
+        - --proxy-mode=userland
         securityContext:
           privileged: true
         volumeMounts:
