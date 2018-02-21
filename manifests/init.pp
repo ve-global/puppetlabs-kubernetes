@@ -203,16 +203,23 @@
 #
 # [*cni_provider*]
 #   The name of the CNI provider to use.
+#
 # [*cni_calico_ipip_mode*]
 #   When using Calico as a CNI provider and the nodes are in different subnets,
 #   IPIP encapsulation must be used to allow the routing of the packages to their targets
 #   Valid values are: 'Off, Always and CrossSubnet'
+#
 # [*cni_calico_nat_outgoing*]
 #   When using Calico as a CNI provider, if the nodes are located in a private subnet, this
 #   parameter needs to be set to allow sending packets to the internet
 #   Can be either true or false
+#
 # [*cloud_provider*]
 #   If a cloud provider known to kubernetes is used, it can be defined here (example: kubernetes)
+#
+# [*apiserver_count*]
+#   The number of active apiserver pods in the cluster. Defaults to 1.
+#
 # Authors
 # -------
 #
@@ -278,6 +285,7 @@ class kubernetes (
   Optional[Enum['Off', 'Always', 'CrossSubnet']] $cni_calico_ipip_mode      = $kubernetes::params::cni_calico_ipip_mode,
   Optional[Boolean] $cni_calico_nat_outgoing                                = $kubernetes::params::cni_calico_nat_outgoing,
   Optional[String] $cloud_provider                                          = $kubernetes::params::cloud_provider,
+  Optional[Integer] $apiserver_count                                        = $kubernetes::params::apiserver_count,
 
   )  inherits kubernetes::params {
 

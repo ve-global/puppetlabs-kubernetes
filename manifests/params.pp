@@ -68,4 +68,5 @@ $cni_provider = undef
 $cni_calico_ipip_mode = 'Off' # [CrossSubnet|Always|Off]you need this in aws if your nodes are not in the same network segment
 $cni_calico_nat_outgoing = false # you need this if you want to be able to allow pods to communicate from a private subnet
 $cloud_provider = undef
+$apiserver_count = 1
 }

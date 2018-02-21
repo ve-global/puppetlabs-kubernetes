@@ -36,6 +36,7 @@ spec:
     - --advertise-address=<%= @kube_api_advertise_address  %>
     - --etcd-servers=http://127.0.0.1:2379
     <% if @cloud_provider == "aws" -%>- --cloud-provider=aws<% end %>
+    - --apiserver-count 
 <% @apiserver_extra_arguments.each do |arg| -%>
     - <%= arg %>
 <% end -%>
