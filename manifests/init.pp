@@ -285,7 +285,7 @@ class kubernetes (
   Optional[Enum['Off', 'Always', 'CrossSubnet']] $cni_calico_ipip_mode      = $kubernetes::params::cni_calico_ipip_mode,
   Optional[Boolean] $cni_calico_nat_outgoing                                = $kubernetes::params::cni_calico_nat_outgoing,
   Optional[String] $cloud_provider                                          = $kubernetes::params::cloud_provider,
-  Optional[Integer] $apiserver_count                                        = $kubernetes::params::apiserver_count,
+  Integer $apiserver_count                                                  = $kubernetes::params::apiserver_count,
 
   )  inherits kubernetes::params {
 
