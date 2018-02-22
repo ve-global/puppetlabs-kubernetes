@@ -24,7 +24,6 @@ spec:
     <% if @cloud_provider == "aws" -%>- --cloud-provider=aws<% end %>
     <%= @cni_node_cidr  %>
     <%= @cni_cluster_cidr  %>
-    <% if @cni_provider == 'calico' -%>- --configure-cloud-routes=false<% end %>
     image: gcr.io/google_containers/kube-controller-manager-amd64:v<%= @kubernetes_version  %>
     livenessProbe:
       failureThreshold: 8
