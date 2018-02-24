@@ -311,6 +311,7 @@ class kubernetes (
 
     Class['kubernetes::repos']
       -> Class['kubernetes::packages']
+      -> Class['kubernetes::cni::calico_common'] # fixme, not everybody has calico
       -> Class['kubernetes::config']
       -> Class['kubernetes::service']
       -> Class['kubernetes::cluster_roles']
@@ -329,6 +330,7 @@ class kubernetes (
 
     Class['kubernetes::repos']
       -> Class['kubernetes::packages']
+      -> Class['kubernetes::cni::calico_common'] # fixme
       -> Class['kubernetes::config']
       -> Class['kubernetes::service']
   }

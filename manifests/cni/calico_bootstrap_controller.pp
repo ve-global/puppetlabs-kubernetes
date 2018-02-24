@@ -17,7 +17,7 @@ class kubernetes::cni::calico_bootstrap_controller (
 
   file { '/var/lib/calico/rbac.yaml':
     ensure  => file,
-    content => epp("kubernetes/cni/calico/rbac.yaml.epp"),
+    content => epp("kubernetes/cni/calico/calico-rbac.yaml.epp"),
   }
 
   file { '/var/lib/calico/calico.yaml':
