@@ -55,6 +55,10 @@ class kubernetes::config (
 
 ){
 
+  case $cni_provider {
+    'calico': { contain kubernetes::cni::calico_common }
+  }
+
   if $controller {
   $kube_dirs = ['/etc/kubernetes/', '/etc/kubernetes/manifests', '/etc/kubernetes/pki', '/etc/kubernetes/addons', '/etc/kubernetes/secrets/'] # lint:ignore:140chars
   $kube_cni_dirs = [ '/etc/cni', '/etc/cni/net.d'] # lint:ignore:140chars

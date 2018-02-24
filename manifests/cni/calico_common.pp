@@ -32,6 +32,7 @@ class kubernetes::cni::calico_common (
     ensure  => file,
     content => epp("kubernetes/cni/calico/10-calico.conflist.epp"),
     replace => false,
+    before => 
   }
 
   file { '/etc/calico':
