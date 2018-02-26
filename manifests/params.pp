@@ -69,4 +69,6 @@ $cni_calico_ipip_mode = 'Off' # [CrossSubnet|Always|Off]you need this in aws if 
 $cni_calico_nat_outgoing = false # you need this if you want to be able to allow pods to communicate from a private subnet
 $cloud_provider = undef
 $apiserver_count = 1
+$install_ingress_controller = false
+$ingress_controller_provider = 'traefik'
 }

@@ -63,7 +63,7 @@ class kubernetes::config (
   $kube_dirs = ['/etc/kubernetes/', '/etc/kubernetes/manifests', '/etc/kubernetes/pki', '/etc/kubernetes/addons', '/etc/kubernetes/secrets/'] # lint:ignore:140chars
   $kube_cni_dirs = [ '/etc/cni', '/etc/cni/net.d'] # lint:ignore:140chars
   $kube_etc_files = ['admin.conf', 'controller-manager.conf', 'kubelet.conf', 'scheduler.conf'] # lint:ignore:140chars
-  $kube_manifest_files = ['etcd.yaml', 'kube-apiserver.yaml', 'kube-controller-manager.yaml', 'kube-scheduler.yaml', 'clusterRoleBinding.yaml'] # lint:ignore:140chars
+  $kube_manifest_files = ['etcd.yaml', 'kube-apiserver.yaml', 'kube-controller-manager.yaml', 'kube-scheduler.yaml', 'clusterRoleBinding.yaml', 'kubeadmin.yaml'] # lint:ignore:140chars
   $kube_addons_files = ['kube-dns-sa.yaml','kube-dns-deployment.yaml', 'kube-dns-service.yaml', 'kube-proxy-sa.yaml', 'kube-proxy-daemonset.yaml', 'kube-proxy.yaml'] # lint:ignore:140chars
   $kube_pki_files = ['apiserver.crt', 'apiserver-kubelet-client.crt', 'ca.crt', 'front-proxy-ca.crt', 'front-proxy-client.crt', 'sa.key',
                     'apiserver.key',  'apiserver-kubelet-client.key', 'ca.key', 'front-proxy-ca.key', 'front-proxy-client.key', 'sa.pub'] # lint:ignore:140chars
