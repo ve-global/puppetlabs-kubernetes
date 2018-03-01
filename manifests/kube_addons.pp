@@ -36,8 +36,8 @@ class kubernetes::kube_addons (
 
     if $install_ingress_controller == true {
       case $ingress_controller_provider {
-        'calico': {
-          include kubernetes::ingress::traefik 
+        'traefik': {
+          include kubernetes::ingress::traefik
           contain kubernetes::ingress::traefik
         }
       }
