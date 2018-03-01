@@ -286,6 +286,8 @@ class kubernetes (
   Optional[Boolean] $cni_calico_nat_outgoing                                = $kubernetes::params::cni_calico_nat_outgoing,
   Optional[String] $cloud_provider                                          = $kubernetes::params::cloud_provider,
   Integer $apiserver_count                                                  = $kubernetes::params::apiserver_count,
+  Boolean $install_ingress_controller                                       = $kubernetes::params::install_ingress_controller,
+  Optional[String] $ingress_controller_provider                             = $kubernetes::params::ingress_controller_provider,
 
   )  inherits kubernetes::params {
 
