@@ -84,6 +84,7 @@ class kubernetes::service (
       unless      => 'kubectl get nodes',
       environment => [ 'HOME=/root', 'KUBECONFIG=/root/admin.conf'],
       require     => [ Service['kubelet'], File['/root/admin.conf']],
+      returns     => 1,
     }
   }
 }
