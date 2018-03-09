@@ -76,8 +76,8 @@ class kubernetes::kube_addons (
 
   if $controller {
     exec { 'Assign master role to controller':
-      command => "kubectl label node ${::hostname} node-role.kubernetes.io/master=",
-      unless  => "kubectl describe nodes ${::hostname} | tr -s ' ' | grep 'Roles: master'",
+      command => "kubectl label node ${::fqdn} node-role.kubernetes.io/master=",
+      unless  => "kubectl describe nodes ${::fqdn} | tr -s ' ' | grep 'Roles: master'",
     }
 
     if $taint_master {
