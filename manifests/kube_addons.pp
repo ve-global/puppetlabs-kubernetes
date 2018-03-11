@@ -92,9 +92,9 @@ class kubernetes::kube_addons (
         }
 
       exec { 'Taint master node':
-        command => "kubectl taint nodes ${::hostname} key=value:NoSchedule",
+        command => "kubectl taint nodes ${::fqdn} key=value:NoSchedule",
         onlyif  => 'kubectl get nodes',
-        unless  => "kubectl describe nodes ${::hostname} | tr -s ' ' | grep 'Taints: key=value:NoSchedule'"
+        unless  => "kubectl describe nodes ${::fqdn} | tr -s ' ' | grep 'Taints: key=value:NoSchedule'"
       }
     }
   }
