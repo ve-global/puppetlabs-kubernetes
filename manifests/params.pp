@@ -4,12 +4,12 @@ class kubernetes::params {
 
 case $::osfamily {
   'Debian' : {
-    $kubernetes_package_version = '1.7.3-01'
-    $cni_version = '0.5.1-01'
+    $kubernetes_package_version = '1.9.2-00'
+    $cni_version = '0.6.0-00'
   }
   'RedHat' : {
-    $kubernetes_package_version = '1.7.3'
-    $cni_version = '0.5.1'
+    $kubernetes_package_version = '1.9.2'
+    $cni_version = '0.6.0'
   }
   default: { notify {"The OS family ${::os_family} is not supported by this module":} }
 }
@@ -62,5 +62,6 @@ $cni_node_cidr = undef
 $cni_network_provider = undef
 $install_dashboard = false
 $taint_master = true
+$node_label = $::hostname
 
 }
