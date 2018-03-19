@@ -4,23 +4,15 @@ class kubernetes::params {
 
 case $::osfamily {
   'Debian' : {
-<<<<<<< HEAD
     $kubernetes_package_version = '1.9.2-00'
     $cni_version = '0.6.0-00'
   }
   'RedHat' : {
     $kubernetes_package_version = '1.9.2'
     $cni_version = '0.6.0'
-=======
     $kubernetes_package_version = '1.7.3-01'
     $cni_version = '0.5.1-01'
-    $docker_version = '1.12.0-0~xenial'
-  }
-  'RedHat' : {
-    $kubernetes_package_version = '1.7.3'
-    $cni_version = '0.5.1'
     $docker_version = '1.12.6'
->>>>>>> 1511bea1435c4c683cb407c7dd0a0ea5c34d094a
   }
   default: { notify {"The OS family ${::os_family} is not supported by this module":} }
 }
