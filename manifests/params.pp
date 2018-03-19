@@ -10,7 +10,6 @@ case $::osfamily {
   'RedHat' : {
     $kubernetes_package_version = '1.9.2'
     $cni_version = '0.6.0'
-    $cni_version = '0.5.1-01'
     $docker_version = '1.12.6'
   }
   default: { notify {"The OS family ${::os_family} is not supported by this module":} }
