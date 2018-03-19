@@ -1,0 +1,9 @@
+apiVersion: projectcalico.org/v3
+kind: IPPool
+metadata:
+  name: default-ipv4-ippool
+spec:
+  cidr: <%= $kubernetes::cni_cluster_cidr %>
+  ipipMode: <%= $kubernetes::cni_calico_ipip_mode %>
+  natOutgoing: <%= $kubernetes::cni_calico_nat_outgoing %>
+  

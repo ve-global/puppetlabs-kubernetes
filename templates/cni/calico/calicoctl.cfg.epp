@@ -1,0 +1,7 @@
+apiVersion: projectcalico.org/v3
+kind: CalicoAPIConfig
+metadata:
+spec:
+  datastoreType: "etcdv3"
+  etcdEndpoints: "http://10.96.232.136:6666"
+  #etcdEndpoints: "<%= $kubernetes::cni::calico_bootstrap_controller::cni_etcd_endpoints %>"

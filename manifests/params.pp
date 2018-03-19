@@ -4,12 +4,23 @@ class kubernetes::params {
 
 case $::osfamily {
   'Debian' : {
+<<<<<<< HEAD
     $kubernetes_package_version = '1.9.2-00'
     $cni_version = '0.6.0-00'
   }
   'RedHat' : {
     $kubernetes_package_version = '1.9.2'
     $cni_version = '0.6.0'
+=======
+    $kubernetes_package_version = '1.7.3-01'
+    $cni_version = '0.5.1-01'
+    $docker_version = '1.12.0-0~xenial'
+  }
+  'RedHat' : {
+    $kubernetes_package_version = '1.7.3'
+    $cni_version = '0.5.1'
+    $docker_version = '1.12.6'
+>>>>>>> 1511bea1435c4c683cb407c7dd0a0ea5c34d094a
   }
   default: { notify {"The OS family ${::os_family} is not supported by this module":} }
 }
@@ -57,11 +68,17 @@ $front_proxy_client_crt = undef
 $front_proxy_client_key = undef
 $sa_key = undef
 $sa_pub = undef
-$cni_cluster_cidr = undef
+$cni_cluster_cidr = "10.32.0.0/12"
 $cni_node_cidr = undef
 $cni_network_provider = undef
 $install_dashboard = false
 $taint_master = true
 $node_label = $::hostname
-
+$cni_provider = undef
+$cni_calico_ipip_mode = 'Off' # [CrossSubnet|Always|Off]you need this in aws if your nodes are not in the same network segment
+$cni_calico_nat_outgoing = false # you need this if you want to be able to allow pods to communicate from a private subnet
+$cloud_provider = undef
+$apiserver_count = 1
+$install_ingress_controller = false
+$ingress_controller_provider = 'traefik'
 }

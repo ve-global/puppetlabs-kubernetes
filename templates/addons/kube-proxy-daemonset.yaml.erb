@@ -21,8 +21,8 @@ spec:
         command:
         - /usr/local/bin/kube-proxy
         - --kubeconfig=/var/lib/kube-proxy/kubeconfig.conf
-        - --cluster-cidr=10.32.0.0/12
-        - --proxy-mode=userspace
+        <%= @cni_cluster_cidr %>
+        - --proxy-mode=userland
         securityContext:
           privileged: true
         volumeMounts:
@@ -34,5 +34,3 @@ spec:
       - name: kube-proxy
         configMap:
           name: kube-proxy
-
-

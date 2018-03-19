@@ -205,6 +205,24 @@
 #   This is a bool that determines if the kubernetes dashboard is installed.
 #   Defaults to false
 #
+# [*cni_provider*]
+#   The name of the CNI provider to use.
+#
+# [*cni_calico_ipip_mode*]
+#   When using Calico as a CNI provider and the nodes are in different subnets,
+#   IPIP encapsulation must be used to allow the routing of the packages to their targets
+#   Valid values are: 'Off, Always and CrossSubnet'
+#
+# [*cni_calico_nat_outgoing*]
+#   When using Calico as a CNI provider, if the nodes are located in a private subnet, this
+#   parameter needs to be set to allow sending packets to the internet
+#   Can be either true or false
+#
+# [*cloud_provider*]
+#   If a cloud provider known to kubernetes is used, it can be defined here (example: kubernetes)
+#
+# [*apiserver_count*]
+#   The number of active apiserver pods in the cluster. Defaults to 1.
 #
 # Authors
 # -------
@@ -215,58 +233,66 @@
 #
 
 class kubernetes (
-  String $kubernetes_version                                       = $kubernetes::params::kubernetes_version,
-  Optional[String] $kubernetes_package_version                     = $kubernetes::params::kubernetes_package_version,
-  String $kubernetes_fqdn                                          = $kubernetes::params::kubernetes_fqdn,
-  String $container_runtime                                        = $kubernetes::params::container_runtime,
-  Optional[String] $cni_version                                    = $kubernetes::params::cni_version,
-  Optional[String] $cni_cluster_cidr                               = $kubernetes::params::cni_cluster_cidr,
-  Optional[String] $cni_node_cidr                                  = $kubernetes::params::cni_node_cidr,
-  String $kube_dns_version                                         = $kubernetes::params::kube_dns_version,
-  Boolean $controller                                              = $kubernetes::params::controller,
-  Boolean $bootstrap_controller                                    = $kubernetes::params::bootstrap_controller,
-  Optional[String] $bootstrap_controller_ip                        = $kubernetes::params::bootstrap_controller_ip,
-  Boolean $worker                                                  = $kubernetes::params::worker,
-  Optional[String] $kube_api_advertise_address                     = $kubernetes::params::kube_api_advertise_address,
-  String $etcd_version                                             = $kubernetes::params::etcd_version,
-  Optional[String] $etcd_ip                                        = $kubernetes::params::etcd_ip,
-  Optional[String] $etcd_initial_cluster                           = $kubernetes::params::etcd_initial_cluster,
-  Optional[String] $bootstrap_token                                = $kubernetes::params::bootstrap_token,
-  Optional[String] $bootstrap_token_name                           = $kubernetes::params::bootstrap_token_name,
-  Optional[String] $bootstrap_token_description                    = $kubernetes::params::bootstrap_token_description,
-  Optional[String] $bootstrap_token_id                             = $kubernetes::params::bootstrap_token_id,
-  Optional[String] $bootstrap_token_secret                         = $kubernetes::params::bootstrap_token_secret,
-  Optional[String] $bootstrap_token_usage_bootstrap_authentication = $kubernetes::params::bootstrap_token_usage_bootstrap_authentication,
-  Optional[String] $bootstrap_token_expiration                     = $kubernetes::params::bootstrap_token_expiration,
-  Optional[String] $bootstrap_token_usage_bootstrap_signing        = $kubernetes::params::bootstrap_token_usage_bootstrap_signing,
-  Optional[String] $certificate_authority_data                     = $kubernetes::params::certificate_authority_data,
-  Optional[String] $client_certificate_data_controller             = $kubernetes::params::client_certificate_data_controller,
-  Optional[String] $client_certificate_data_controller_manager     = $kubernetes::params::client_certificate_data_controller_manager,
-  Optional[String] $client_certificate_data_scheduler              = $kubernetes::params::client_certificate_data_scheduler,
-  Optional[String] $client_certificate_data_worker                 = $kubernetes::params::client_certificate_data_worker,
-  Optional[String] $client_certificate_data_admin                  = $kubernetes::params::client_certificate_data_admin,
-  Optional[String] $client_key_data_controller                     = $kubernetes::params::client_key_data_controller,
-  Optional[String] $client_key_data_controller_manager             = $kubernetes::params::client_key_data_controller_manager,
-  Optional[String] $client_key_data_scheduler                      = $kubernetes::params::client_key_data_scheduler,
-  Optional[String] $client_key_data_worker                         = $kubernetes::params::client_key_data_worker,
-  Optional[String] $client_key_data_admin                          = $kubernetes::params::client_key_data_admin,
-  Optional[String] $apiserver_kubelet_client_crt                   = $kubernetes::params::apiserver_kubelet_client_crt,
-  Optional[String] $apiserver_kubelet_client_key                   = $kubernetes::params::apiserver_kubelet_client_key,
-  Optional[String] $apiserver_crt                                  = $kubernetes::params::apiserver_crt,
-  Optional[String] $apiserver_key                                  = $kubernetes::params::apiserver_key,
-  Array $apiserver_extra_arguments                                 = $kubernetes::params::apiserver_extra_arguments,
-  Optional[String] $ca_crt                                         = $kubernetes::params::ca_crt,
-  Optional[String] $ca_key                                         = $kubernetes::params::ca_key,
-  Optional[String] $front_proxy_ca_crt                             = $kubernetes::params::front_proxy_ca_crt,
-  Optional[String] $front_proxy_ca_key                             = $kubernetes::params::front_proxy_ca_key,
-  Optional[String] $front_proxy_client_crt                         = $kubernetes::params::front_proxy_client_crt,
-  Optional[String] $front_proxy_client_key                         = $kubernetes::params::front_proxy_client_key,
-  Optional[String] $sa_key                                         = $kubernetes::params::sa_key,
-  Optional[String] $sa_pub                                         = $kubernetes::params::sa_pub,
-  Optional[String] $cni_network_provider                           = $kubernetes::params::cni_network_provider,
-  Boolean $install_dashboard                                       = $kubernetes::params::install_dashboard,
-  Boolean $taint_master                                            = $kubernetes::params::taint_master,
-  String $node_label                                               = $kubernetes::params::node_label,
+  String $kubernetes_version                                                = $kubernetes::params::kubernetes_version,
+  Optional[String] $kubernetes_package_version                              = $kubernetes::params::kubernetes_package_version,
+  String $kubernetes_fqdn                                                   = $kubernetes::params::kubernetes_fqdn,
+  String $container_runtime                                                 = $kubernetes::params::container_runtime,
+  Optional[String] $cni_version                                             = $kubernetes::params::cni_version,
+  Optional[String] $cni_cluster_cidr                                        = $kubernetes::params::cni_cluster_cidr,
+  Optional[String] $cni_node_cidr                                           = $kubernetes::params::cni_node_cidr,
+  String $kube_dns_version                                                  = $kubernetes::params::kube_dns_version,
+  Boolean $controller                                                       = $kubernetes::params::controller,
+  Boolean $bootstrap_controller                                             = $kubernetes::params::bootstrap_controller,
+  Optional[String] $bootstrap_controller_ip                                 = $kubernetes::params::bootstrap_controller_ip,
+  Boolean $worker                                                           = $kubernetes::params::worker,
+  Optional[String] $kube_api_advertise_address                              = $kubernetes::params::kube_api_advertise_address,
+  String $etcd_version                                                      = $kubernetes::params::etcd_version,
+  Optional[String] $etcd_ip                                                 = $kubernetes::params::etcd_ip,
+  Optional[String] $etcd_initial_cluster                                    = $kubernetes::params::etcd_initial_cluster,
+  Optional[String] $bootstrap_token                                         = $kubernetes::params::bootstrap_token,
+  Optional[String] $bootstrap_token_name                                    = $kubernetes::params::bootstrap_token_name,
+  Optional[String] $bootstrap_token_description                             = $kubernetes::params::bootstrap_token_description,
+  Optional[String] $bootstrap_token_id                                      = $kubernetes::params::bootstrap_token_id,
+  Optional[String] $bootstrap_token_secret                                  = $kubernetes::params::bootstrap_token_secret,
+  Optional[String] $bootstrap_token_usage_bootstrap_authentication          = $kubernetes::params::bootstrap_token_usage_bootstrap_authentication,
+  Optional[String] $bootstrap_token_expiration                              = $kubernetes::params::bootstrap_token_expiration,
+  Optional[String] $bootstrap_token_usage_bootstrap_signing                 = $kubernetes::params::bootstrap_token_usage_bootstrap_signing,
+  Optional[String] $certificate_authority_data                              = $kubernetes::params::certificate_authority_data,
+  Optional[String] $client_certificate_data_controller                      = $kubernetes::params::client_certificate_data_controller,
+  Optional[String] $client_certificate_data_controller_manager              = $kubernetes::params::client_certificate_data_controller_manager,
+  Optional[String] $client_certificate_data_scheduler                       = $kubernetes::params::client_certificate_data_scheduler,
+  Optional[String] $client_certificate_data_worker                          = $kubernetes::params::client_certificate_data_worker,
+  Optional[String] $client_certificate_data_admin                           = $kubernetes::params::client_certificate_data_admin,
+  Optional[String] $client_key_data_controller                              = $kubernetes::params::client_key_data_controller,
+  Optional[String] $client_key_data_controller_manager                      = $kubernetes::params::client_key_data_controller_manager,
+  Optional[String] $client_key_data_scheduler                               = $kubernetes::params::client_key_data_scheduler,
+  Optional[String] $client_key_data_worker                                  = $kubernetes::params::client_key_data_worker,
+  Optional[String] $client_key_data_admin                                   = $kubernetes::params::client_key_data_admin,
+  Optional[String] $apiserver_kubelet_client_crt                            = $kubernetes::params::apiserver_kubelet_client_crt,
+  Optional[String] $apiserver_kubelet_client_key                            = $kubernetes::params::apiserver_kubelet_client_key,
+  Optional[String] $apiserver_crt                                           = $kubernetes::params::apiserver_crt,
+  Optional[String] $apiserver_key                                           = $kubernetes::params::apiserver_key,
+  Array $apiserver_extra_arguments                                          = $kubernetes::params::apiserver_extra_arguments,
+  Optional[String] $ca_crt                                                  = $kubernetes::params::ca_crt,
+  Optional[String] $ca_key                                                  = $kubernetes::params::ca_key,
+  Optional[String] $front_proxy_ca_crt                                      = $kubernetes::params::front_proxy_ca_crt,
+  Optional[String] $front_proxy_ca_key                                      = $kubernetes::params::front_proxy_ca_key,
+  Optional[String] $front_proxy_client_crt                                  = $kubernetes::params::front_proxy_client_crt,
+  Optional[String] $front_proxy_client_key                                  = $kubernetes::params::front_proxy_client_key,
+  Optional[String] $sa_key                                                  = $kubernetes::params::sa_key,
+  Optional[String] $sa_pub                                                  = $kubernetes::params::sa_pub,
+  Optional[String] $cni_network_provider                                    = $kubernetes::params::cni_network_provider,
+  Optional[String] $docker_version                                          = $kubernetes::params::docker_version,
+  Boolean $install_dashboard                                                = $kubernetes::params::install_dashboard,
+  Boolean $taint_master                                                     = $kubernetes::params::taint_master,
+  String $node_label                                                        = $kubernetes::params::node_label,
+  Optional[String] $cni_provider                                            = $kubernetes::params::cni_provider,
+  Optional[Enum['Off', 'Always', 'CrossSubnet']] $cni_calico_ipip_mode      = $kubernetes::params::cni_calico_ipip_mode,
+  Optional[Boolean] $cni_calico_nat_outgoing                                = $kubernetes::params::cni_calico_nat_outgoing,
+  Optional[String] $cloud_provider                                          = $kubernetes::params::cloud_provider,
+  Integer $apiserver_count                                                  = $kubernetes::params::apiserver_count,
+  Boolean $install_ingress_controller                                       = $kubernetes::params::install_ingress_controller,
+  Optional[String] $ingress_controller_provider                             = $kubernetes::params::ingress_controller_provider,
 
   )  inherits kubernetes::params {
 
@@ -313,4 +339,5 @@ class kubernetes (
       -> Class['kubernetes::config']
       -> Class['kubernetes::service']
   }
+
 }
