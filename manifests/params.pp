@@ -10,7 +10,6 @@ case $::osfamily {
   'RedHat' : {
     $kubernetes_package_version = '1.9.2'
     $cni_version = '0.6.0'
-    $kubernetes_package_version = '1.7.3-01'
     $cni_version = '0.5.1-01'
     $docker_version = '1.12.6'
   }
